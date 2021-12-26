@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title></title>
+        <link>undefined</link>
+        <description>undefined</description>
+        <lastBuildDate>Sun, 26 Dec 2021 16:38:46 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>Joplin Pages Publisher</generator>
+        <item>
+            <title><![CDATA[DL框架通用]]></title>
+            <guid>56c599ef8b58457d9e803e7126f2763f</guid>
+            <pubDate>Sat, 25 Dec 2021 18:13:50 GMT</pubDate>
+            <content:encoded><![CDATA[<nav class="table-of-contents"><ul><li><a href="#tensor">Tensor</a><ul><li><a href="#维度">维度</a></li><li><a href="#属性">属性</a></li></ul></li><li><a href="#计算图-computational-graphs">计算图 Computational Graphs</a></li><li><a href="#超参数">超参数</a><ul><li><a href="#epoch">epoch</a></li><li><a href="#batch_size">batch_size</a></li><li><a href="#iteration">iteration</a></li></ul></li><li><a href="#中间值">中间值</a><ul><li><a href="#logits">logits</a></li></ul></li></ul></nav><h3 id="tensor">Tensor</h3>
+<p>张量，一种表示物理量的方式
+标量（Scalar），零维张量，有大小，无方向，如1，2，3等
+向量（Vector），一维张量，有大小和方向，其实就是一串数字，如(1,2)
+矩阵（Matrix），二维张量，好几个向量成一排合并而成的一堆数字，如[1,2;3,4]</p>
+<h4 id="维度">维度</h4>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>tensor</th>
+<th>size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>标量</td>
+<td>[]</td>
+</tr>
+<tr>
+<td>[1., 2., 3.]</td>
+<td>一维张量</td>
+<td>[3]</td>
+</tr>
+<tr>
+<td>[[1., 2., 3.], [4., 5., 6.]]</td>
+<td>二维张量</td>
+<td>[2,3] 即 2* 3</td>
+</tr>
+<tr>
+<td>[  [ [1., 2., 3.] ], [ [7., 8., 9. ] ]  ]</td>
+<td>三维张量</td>
+<td>[2,1,3]</td>
+</tr>
+</tbody>
+</table>
+<p>有多少层 中括号[ ]，就有多少维，  没有中括号的是标量
+从外到内a* b* c</p>
+<p>size [32, 10, 5]       想象成 32层 [10,5] 的矩阵，<br />
+size [32, 10, 5, 2]    想象成 32个 [10,5,2] 的立方体
+tensor可以是n维，二维矩阵就像n维tensor的一个二维切面</p>
+<p>tensor 就像容纳这些数据的容器，可使用下标对容器中的数据进行索引，a[0][0][1]</p>
+<p>tensor.shape : [32, 10, 5]   batch_size，seq_len, label_count
+第几个（32个batch中的第几个batch），第0维（列），第1维（行）
+此tenser的最里层的每个array的len是5
+每个batch有10个这样的array
+一共有32个batch</p>
+<p>tensor.softmax(dim)</p>
+<p>len(tensor) 得到的是batch_size</p>
+<h4 id="属性">属性</h4>
+<p>dtype：存储的数据的类型，如float、int等；
+shape：tensor中每一维度的元素个数，理解为容器的形状大小。</p>
+<h3 id="计算图-computational-graphs">计算图 Computational Graphs</h3>
+<p>（数据流图 data flow graphs 好像是相反的）</p>
+<p>由节点，边构成的有向图。</p>
+<p>节点（nodes）：变量
+边（edges）：操作/函数，比如求导等</p>
+<p>![2f702df2.png](:storage/8ab2e452-a9df-48f5-8cb1-0f0b6023d63e/2f702df2.png =300x150)</p>
+<p>链式法则，自动微分</p>
+<p>静态计算图：
+Tensorflow1.x
+第一步定义计算图，使用各种算子创建计算图，
+第二步在Session中，执行计算图
+理论上性能更好。几乎全部在TensorFlow内核上使用C++代码执行，并且有步骤优化。</p>
+<p>动态计算图：
+程序按照我们编写的顺序进行执行。调试更加容易。
+PyTorch，每个forward过程会定义一个新的计算图，backward时销毁图</p>
+<p>TensorFlow2中，如果采用Autograph的方式使用计算图，第一步定义函数，第二步调用函数。
+不需要使用Session。实践中，一般会先用动态计算图调试代码，需要提高性能的的地方用@tf.function切换成Autograph获得更高的效率。</p>
+<h3 id="超参数">超参数</h3>
+<h4 id="epoch">epoch</h4>
+<p>训练时，一个epoch是一个迭代：<strong>完整的训练数据集</strong>通过神经网络一次，并且返回了一次，
+神经网络中的权重更新，梯度下降。</p>
+<p>随着epoch数量增加，权重的更新次数也增加，曲线从欠拟合变得过拟合。
+当一个epoch的数据太庞大，需要把它分成多个Batch</p>
+<h4 id="batch_size">batch_size</h4>
+<p>在训练集中选择一组样本，用来更新权值。
+batch_size，通常设为2的n次幂，常用的包括64，128，256。 网络较小时选用256，较大时选用64。</p>
+<h4 id="iteration">iteration</h4>
+<p>训练时，1个batch数据，通过网络训练一次（一次前向传播+一次反向传播），就是一次iteration，模型权重更新一次；
+测试时，1个batch数据，通过网络一次（一次前向传播）。</p>
+<p>一个 epoch 中，batch数 = iteration数</p>
+<p>对于一个有 2000 个训练样本的数据集，分成大小为 500 的 batch，那么完成一个 epoch 需要 4 个 iteration。</p>
+<p><img src=":storage/8ab2e452-a9df-48f5-8cb1-0f0b6023d63e/62718a57.png" alt="9ae80392.png" /></p>
+<p>那么batch size直接调小了会有不好的影响吗？
+在显存能允许的情况下，同样的epoch数目，大的batchsize需要的batch数目(迭代次数)减少了，可以减少训练时间，
+另一方面，大的batch size梯度的计算更加稳定，因为模型训练曲线会更加平滑。
+在微调的时候，大的batch size可能会取得更好的结果。但是随着batchsize的增加，模型的性能会下降。</p>
+<p>大的batchsize减少训练时间，提高稳定性
+小batch size引入的随机性会更大些，具有更好的泛化能力</p>
+<p>学习率和batchsize的关系
+从两种常见的调整策略来看，学习率和batchsize都是同时增加的。研究[1]表明，对于一个固定的学习率，存在一个最优的batchsize能够最大化测试精度，这个batchsize和学习率以及训练集的大小正相关。</p>
+<p>使用比较多的策略是：
+当我们增加batchsize为原来的N倍时，要保证经过同样的样本后更新的权重相等，按照线性缩放规则，学习率应该增加为原来的N倍</p>
+<p>对此实际上是有两个建议：
+如果增加了学习率，那么batch size最好也跟着增加，这样收敛更稳定。
+尽量使用大的学习率，因为很多研究都表明更大的学习率有利于提高泛化能力。</p>
+<p>train loss 不断下降，test loss不断下降：说明网络仍在学习;
+train loss 不断下降，test loss趋于不变：说明网络过拟合;
+train loss 趋于不变，test loss不断下降：说明数据集100%有问题;
+train loss 趋于不变，test loss趋于不变：说明学习遇到瓶颈，需要减小学习率或批量数目;或者是数据集有问题（数据集标注错误数据比较多）
+train loss 不断上升，test loss不断上升：说明网络结构设计不当，训练超参数设置不当，数据集经过清洗等问题。</p>
+<h3 id="中间值">中间值</h3>
+<h4 id="logits">logits</h4>
+<p>这里不是logit的数学统计含义：logit=log(p/1-p)，log(一个事件发生概率/该事件不发生概率)</p>
+<p>logits = tf.matmul(X, W) + bias</p>
+<p>再对logits做归一化处理，就用到了softmax：</p>
+<p>Y_pred = tf.nn.softmax(logits,name=‘Y_pred’)</p>
+<p>logits ——【batchsize，class_num】是未进入softmax的概率，一般是全连接层的输出，softmax的输入</p>
+<p>分类模型生成的原始（未归一化）预测向量，通常将其传递给归一化函数。 如果模型正在解决多类分类问题，则logit通常会成为softmax函数的输入。 然后，softmax函数会生成一个（归一化）概率向量，每个可能的类都有一个值。请注意，这些值没有标准化（即每一行的和不等于1）。为了对它们进行归一化，可以应用softmax函数，它将输入解释为未归一化对数概率（又名logits）并输出归一化的线性概率。</p>
+<p>logits就是不必担心值在0和1之间、各种情况相加等于1，但是又可以被容易地转换成那种格式的表示概率的值。</p>
+]]></content:encoded>
+        </item>
+    </channel>
+</rss>
