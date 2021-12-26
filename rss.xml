@@ -4,9 +4,87 @@
         <title></title>
         <link>undefined</link>
         <description>undefined</description>
-        <lastBuildDate>Sun, 26 Dec 2021 17:03:48 GMT</lastBuildDate>
+        <lastBuildDate>Sun, 26 Dec 2021 17:14:07 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>Joplin Pages Publisher</generator>
+        <item>
+            <title><![CDATA[save/load]]></title>
+            <guid>eccd5f83af104fe3a9b63811b68d3f06</guid>
+            <pubDate>Sun, 26 Dec 2021 15:04:43 GMT</pubDate>
+            <content:encoded><![CDATA[<p><a title="https://github.com/huggingface/transformers/issues/7849" href="https://github.com/huggingface/transformers/issues/7849">how to save and load fine-tuned model? · Issue #7849 · huggingface/transformers · GitHub</a></p>
+<p>Save to file
+只保存cpu版本
+x = torch.tensor([0, 1, 2, 3, 4])
+x.cpu()
+torch.save(x, ‘tensor.pt’)</p>
+<p>Load all tensors onto the CPU</p>
+<div><pre class="hljs"><code>torch.load(<span class="hljs-string">'tensors.pt'</span>)
+
+
+Load <span class="hljs-built_in">all</span> tensors onto GPU <span class="hljs-number">1</span>
+torch.load(<span class="hljs-string">'tensors.pt'</span>, map_location=<span class="hljs-keyword">lambda</span> storage, loc: storage.cuda(<span class="hljs-number">1</span>))
+torch.load(<span class="hljs-string">'tensors.pt'</span>, map_location=device)
+
+<span class="hljs-keyword">if</span> torch.cuda.is_available():
+    map_location=<span class="hljs-keyword">lambda</span> storage, loc: storage.cuda()
+<span class="hljs-keyword">else</span>:
+    map_location=<span class="hljs-string">'cpu'</span>
+checkpoint = torch.load(load_path, map_location=map_location)</code></pre></div>
+<h4 id="modelparameters">model.parameters()</h4>
+<p>the learnable parameters (i.e. weights and biases) of an torch.nn.Module model
+通过 model.parameters()得到</p>
+<h4 id="state_dict">state_dict()</h4>
+<p>是 Python dict object that maps each layer to its parameter tensor.</p>
+<p>model里有
+Note that only layers with learnable parameters (convolutional layers, linear layers, etc.) and registered buffers (batchnorm’s running_mean) have entries in the model’s state_dict.</p>
+<p>Optimizer，scheduler里有
+Optimizer objects (torch.optim) 也有 a state_dict, which contains information about the optimizer’s state, as well as the hyperparameters used.</p>
+<div><pre class="hljs"><code>
+<span class="hljs-comment"># Initialize optimizer</span>
+optimizer = optim.SGD(model.parameters(), lr=<span class="hljs-number">0.001</span>, momentum=<span class="hljs-number">0.9</span>)
+
+
+<span class="hljs-comment"># Print model's state_dict</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Model's state_dict:"</span>)
+<span class="hljs-keyword">for</span> param_tensor <span class="hljs-keyword">in</span> model.state_dict():
+    <span class="hljs-built_in">print</span>(param_tensor, <span class="hljs-string">"\t"</span>, model.state_dict()[param_tensor].size())
+
+<span class="hljs-comment"># Print optimizer's state_dict</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Optimizer's state_dict:"</span>)
+<span class="hljs-keyword">for</span> var_name <span class="hljs-keyword">in</span> optimizer.state_dict():
+    <span class="hljs-built_in">print</span>(var_name, <span class="hljs-string">"\t"</span>, optimizer.state_dict()[var_name])</code></pre></div>
+<h3 id="saveload-learned-parameters">save/load learned parameters</h3>
+<p>通用的PyTorch convention is to save models using either a .pt or .pth file extension.</p>
+<p>推荐保存 trained model 的learned parameters就够了，而不是整个模型</p>
+<div><pre class="hljs"><code><span class="hljs-comment">#  save trained model's learned parameters</span>
+torch.save(model.state_dict(), FILE_NAME)
+torch.save(model.cpu().state_dict(), FILE_NAME)  <span class="hljs-comment"># cpu参数</span>
+
+<span class="hljs-comment">#  load trained model's learned parameters</span>
+model = TheModelClass(*args, **kwargs)
+model.load_state_dict(torch.load(FILE_NAME, map_location=...))
+
+<span class="hljs-comment"># gpu -&gt; cpu</span>
+map_location=<span class="hljs-keyword">lambda</span> storage, loc: storage
+<span class="hljs-keyword">or</span>
+map_location=<span class="hljs-string">'cpu'</span>
+
+<span class="hljs-comment"># cpu -&gt; gpu 1</span>
+map_location=<span class="hljs-keyword">lambda</span> storage, loc: storage.cuda(<span class="hljs-number">1</span>)
+
+<span class="hljs-comment"># gpu 1 -&gt; gpu 0</span>
+map_location={<span class="hljs-string">'cuda:1'</span>:<span class="hljs-string">'cuda:0'</span>}
+
+
+<span class="hljs-comment"># inference, 别忘了</span>
+model.<span class="hljs-built_in">eval</span>()
+...</code></pre></div>
+<h3 id="saveload-entire-model">Save/Load Entire Model</h3>
+<p>torch.save(model, PATH)</p>
+<p>model = torch.load(PATH)
+model.eval()</p>
+]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[DL框架通用]]></title>
             <guid>56c599ef8b58457d9e803e7126f2763f</guid>
