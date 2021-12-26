@@ -6,12 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 <link rel="stylesheet" href="/_assets/main.css" />
 
-    <title>DL框架通用 - notes</title>
+    <title>DL框架通用 - lx_notes</title>
   </head>
   <body>
     <div class="main">
       <nav class="navigation">
-        <a href="/">notes</a>
+        <a href="/">lx_notes</a>
       </nav>
       <article>
         <header>
@@ -24,8 +24,8 @@
                 ></span
               >
               <span
-                >Updated At：<time datetime="1640536625762"
-                  >2021-12-27 00:37</time
+                >Updated At：<time datetime="1640537221690"
+                  >2021-12-27 00:47</time
                 ></span
               >
             </div>
@@ -90,7 +90,7 @@ shape：tensor中每一维度的元素个数，理解为容器的形状大小。
 <p>由节点，边构成的有向图。</p>
 <p>节点（nodes）：变量
 边（edges）：操作/函数，比如求导等</p>
-<p>![2f702df2.png](:storage/8ab2e452-a9df-48f5-8cb1-0f0b6023d63e/2f702df2.png =300x150)</p>
+<p><img src="/_resources/3bd3464b92884e3fb2583ef929bcacff.png" /></p>
 <p>链式法则，自动微分</p>
 <p>静态计算图：
 Tensorflow1.x
@@ -116,7 +116,7 @@ batch_size，通常设为2的n次幂，常用的包括64，128，256。 网络�
 测试时，1个batch数据，通过网络一次（一次前向传播）。</p>
 <p>一个 epoch 中，batch数 = iteration数</p>
 <p>对于一个有 2000 个训练样本的数据集，分成大小为 500 的 batch，那么完成一个 epoch 需要 4 个 iteration。</p>
-<p><img src=":storage/8ab2e452-a9df-48f5-8cb1-0f0b6023d63e/62718a57.png" alt="9ae80392.png" /></p>
+<p><img src="/_resources/53ed856d967a46a1952faadbb07136c9.png" /></p>
 <p>那么batch size直接调小了会有不好的影响吗？
 在显存能允许的情况下，同样的epoch数目，大的batchsize需要的batch数目(迭代次数)减少了，可以减少训练时间，
 另一方面，大的batch size梯度的计算更加稳定，因为模型训练曲线会更加平滑。
